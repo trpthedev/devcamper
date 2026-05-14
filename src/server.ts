@@ -1,16 +1,11 @@
 import express from "express";
 import dotenv from "dotenv";
 import bootcamps from "./routes/bootcamps.js";
+import { logger } from "./middleware/logger.js";
 
 dotenv.config();
 
 const app = express();
-
-const logger = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  req.signature = "TRP";
-  console.log(`${req.method} ${req.originalUrl}`);
-  next();
-};
 
 app.use(logger);
 
