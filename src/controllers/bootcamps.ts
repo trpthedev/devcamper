@@ -4,6 +4,7 @@ export const getBootcamps = (req: Request, res: Response, next: NextFunction) =>
   res.status(200).json({
     success: true,
     message: "Show bootcamps",
+    signature: req.signature, // Access the custom property added by the logger middleware
   });
 };
 
