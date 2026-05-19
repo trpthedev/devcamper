@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
+import { Bootcamp } from "../models/Bootcamp.js";
 
 export const getBootcamps = (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json({
@@ -15,11 +16,23 @@ export const getBootcamp = (req: Request, res: Response, next: NextFunction) => 
   });
 };
 
-export const createBootcamp = (req: Request, res: Response, next: NextFunction) => {
-  res.status(200).json({
-    success: true,
-    message: "Create bootcamps",
-  });
+export const createBootcamp = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const bootcamp = await Bootcamp.create(req.body);
+
+        res.status(201).json({
+            success: true,
+            data: bootcamp
+        });
+    } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : String(err);
+
+        res.status(400).json({
+            success: false,
+            error: errorMessage
+        });
+    }
+
 };
 
 export const updateBootcamp = (req: Request, res: Response, next: NextFunction) => {
