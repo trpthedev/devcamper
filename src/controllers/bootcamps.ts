@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { Bootcamp } from "../models/Bootcamp.js";
+import { ErrorResponse } from "../utils/errorResponse.js";
 
 export const getBootcamps = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -9,14 +10,8 @@ export const getBootcamps = async (req: Request, res: Response, next: NextFuncti
             success: true,
             data: bootcamps
         });
-    } catch (err: unknown) {
+    } catch (err: unknown){
         next(err);
-        // const errorMessage = err instanceof Error ? err.message : String(err);
-
-        // res.status(400).json({
-        //     success: false,
-        //     error: errorMessage
-        // });
     }   
 };
 
@@ -25,23 +20,14 @@ export const getBootcamp = async (req: Request, res: Response, next: NextFunctio
         const bootcamp = await Bootcamp.findById(req.params.id);
 
         if (!bootcamp) {
-            return res.status(404).json({
-                success: false,
-                error: "Bootcamp not found with id of " + req.params.id
-            });
+            return next(new ErrorResponse(`Resource not found with id of ${req.params.id}`, 404));
         }
         res.status(200).json({
             success: true,
             data: bootcamp
         });
     } catch (err: unknown) {
-        next(err);
-        // const errorMessage = err instanceof Error ? err.message : String(err);
-
-        // res.status(400).json({
-        //     success: false,
-        //     error: errorMessage
-        // });
+       next(err);
     }   
 
 };
@@ -55,12 +41,7 @@ export const createBootcamp = async (req: Request, res: Response, next: NextFunc
             data: bootcamp
         });
     } catch (err: unknown) {
-        const errorMessage = err instanceof Error ? err.message : String(err);
-
-        res.status(400).json({
-            success: false,
-            error: errorMessage
-        });
+        next(err);
     }
 
 };
@@ -73,10 +54,7 @@ export const updateBootcamp = async (req: Request, res: Response, next: NextFunc
         });
 
         if (!bootcamp) {
-            return res.status(404).json({
-                success: false,
-                error: "Bootcamp not found with id of " + req.params.id
-            });
+            return next(new ErrorResponse(`Resource not found with id of ${req.params.id}`, 404));
         }
 
         res.status(200).json({
@@ -84,12 +62,7 @@ export const updateBootcamp = async (req: Request, res: Response, next: NextFunc
             data: bootcamp
         });
     } catch (err: unknown) {
-        const errorMessage = err instanceof Error ? err.message : String(err);
-
-        res.status(400).json({
-            success: false,
-            error: errorMessage
-        });
+        next(err);
     }
 
 };
@@ -99,10 +72,7 @@ export const deleteBootcamp = async (req: Request, res: Response, next: NextFunc
         const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id);
 
         if (!bootcamp) {
-            return res.status(404).json({
-                success: false,
-                error: "Bootcamp not found with id of " + req.params.id
-            });
+            return next(new ErrorResponse(`Resource not found with id of ${req.params.id}`, 404));
         }
 
         res.status(200).json({
@@ -110,12 +80,7 @@ export const deleteBootcamp = async (req: Request, res: Response, next: NextFunc
             data: {}
         });
     } catch (err: unknown) {
-        const errorMessage = err instanceof Error ? err.message : String(err);
-
-        res.status(400).json({
-            success: false,
-            error: errorMessage
-        });
+        next(err);
     }
 
 };
