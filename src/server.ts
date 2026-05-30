@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import bootcamps from "./routes/bootcamps.js";
 import { logger } from "./middleware/logger.js";
+import { errorHandler } from "./middleware/error.js";
 import { connectDB } from "./db.js";
 
 dotenv.config();
@@ -15,6 +16,8 @@ app.use(express.json());
 app.use(logger);
 
 app.use('/api/v1/bootcamps', bootcamps);
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT ?? 3000;
 

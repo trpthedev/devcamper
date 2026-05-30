@@ -10,12 +10,13 @@ export const getBootcamps = async (req: Request, res: Response, next: NextFuncti
             data: bootcamps
         });
     } catch (err: unknown) {
-        const errorMessage = err instanceof Error ? err.message : String(err);
+        next(err);
+        // const errorMessage = err instanceof Error ? err.message : String(err);
 
-        res.status(400).json({
-            success: false,
-            error: errorMessage
-        });
+        // res.status(400).json({
+        //     success: false,
+        //     error: errorMessage
+        // });
     }   
 };
 
@@ -34,12 +35,13 @@ export const getBootcamp = async (req: Request, res: Response, next: NextFunctio
             data: bootcamp
         });
     } catch (err: unknown) {
-        const errorMessage = err instanceof Error ? err.message : String(err);
+        next(err);
+        // const errorMessage = err instanceof Error ? err.message : String(err);
 
-        res.status(400).json({
-            success: false,
-            error: errorMessage
-        });
+        // res.status(400).json({
+        //     success: false,
+        //     error: errorMessage
+        // });
     }   
 
 };
@@ -63,16 +65,57 @@ export const createBootcamp = async (req: Request, res: Response, next: NextFunc
 
 };
 
-export const updateBootcamp = (req: Request, res: Response, next: NextFunction) => {
-  res.status(200).json({
-    success: true,
-    message: "Update bootcamp with id: " + req.params.id,
-  });
+export const updateBootcamp = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
+            new: true,
+            runValidators: true
+        });
+
+        if (!bootcamp) {
+            return res.status(404).json({
+                success: false,
+                error: "Bootcamp not found with id of " + req.params.id
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: bootcamp
+        });
+    } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : String(err);
+
+        res.status(400).json({
+            success: false,
+            error: errorMessage
+        });
+    }
+
 };
 
-export const deleteBootcamp = (req: Request, res: Response, next: NextFunction) => {
-  res.status(200).json({
-    success: true,
-    message: "Delete bootcamp with id: " + req.params.id,
-  });
+export const deleteBootcamp = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id);
+
+        if (!bootcamp) {
+            return res.status(404).json({
+                success: false,
+                error: "Bootcamp not found with id of " + req.params.id
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: {}
+        });
+    } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : String(err);
+
+        res.status(400).json({
+            success: false,
+            error: errorMessage
+        });
+    }
+
 };
