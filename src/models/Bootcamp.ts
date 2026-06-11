@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import slugify from "slugify";
 
 const BootcampSchema = new mongoose.Schema(
     {
@@ -100,5 +101,8 @@ const BootcampSchema = new mongoose.Schema(
     }
 );
 
+BootcampSchema.pre('save', function () {
+    this.slug = slugify(this.name, { lower: true });
+});
 
 export const Bootcamp = mongoose.model("Bootcamp", BootcampSchema);
