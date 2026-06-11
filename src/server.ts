@@ -1,11 +1,9 @@
+import "dotenv/config";
 import express from "express";
-import dotenv from "dotenv";
 import bootcamps from "./routes/bootcamps.js";
 import { logger } from "./middleware/logger.js";
 import { errorHandler } from "./middleware/error.js";
 import { connectDB } from "./db.js";
-
-dotenv.config();
 
 connectDB();
 

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import slugify from "slugify";
+import { geocoder } from "../utils/geocoder";
 
 const BootcampSchema = new mongoose.Schema(
     {
@@ -103,6 +104,27 @@ const BootcampSchema = new mongoose.Schema(
 
 BootcampSchema.pre('save', function () {
     this.slug = slugify(this.name, { lower: true });
+});
+
+
+BootcampSchema.pre('save', async function () {
+    const [loc] = await geocoder.geocode(this.address);
+    if (!loc || loc.longitude === undefined || loc.latitude === undefined) {
+        throw new Error(`Could not geocode address: ${this.address}`);
+    }
+    this.location = {
+        type: 'Point',
+        coordinates: [loc.longitude, loc.latitude],
+        formattedAddress: loc.formattedAddress ?? null,
+        street: loc.streetName ?? null,
+        city: loc.city ?? null,
+        state: loc.stateCode ?? null,
+        zipcode: loc.zipcode ?? null,
+        country: loc.countryCode ?? null
+    };
+
+    // Do not save address in DB
+    this.set('address', undefined);
 });
 
 export const Bootcamp = mongoose.model("Bootcamp", BootcampSchema);
